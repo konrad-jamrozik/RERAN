@@ -87,6 +87,8 @@ void goSleep(uint64_t nsec)
 
 #define EVIOCGRAB		_IOW('E', 0x90, int)			/* Grab/Release device */
 
+#define MAXEVENTTYPE  20
+
 // end <linux/input.h>
 
 #define ARRAYSIZE(x)  (sizeof(x)/sizeof(*(x)))
@@ -179,29 +181,34 @@ int main(int argc, char *argv[])
 				
 		char device[] = "/dev/input/event "; 
 		//[16] is for the event input number
-		
+
 		char* deviceP = device;
-		int fd;
-		
+		int fd[MAXEVENTTYPE];
+		for (i = 0; i < MAXEVENTTYPE; i++)
+			fd[i] = -1;
+
 		j=0,k=0;
-		
+
 		// For each of the line numbers get the event, validate it, and then write it
 		while(k < lineNumbers)
-		{				
-			deviceP[16] = eventType[k]+48; //add 48 to get to the ascii char
-			fd = open(deviceP, O_RDWR);		
+		{
+			int e = eventType[k];
+			if (fd[e] < 0) {
+				deviceP[16] = eventType[k]+48; //add 48 to get to the ascii char
+				fd[e] = open(deviceP, O_RDWR);
+			}
 
 			int ret;
 			int version;
-		
-			// Make sure opening the device opens properly			
-			if(fd <= 0) 
+
+			// Make sure opening the device opens properly
+			if(fd[e] <= 0)
 			{
 				fprintf(stderr, "could not open %s, %s\n", *(&deviceP), strerror(errno));
 				return 1;
 			}
-			
-			if (ioctl(fd, EVIOCGVERSION, &version)) 
+
+			if (ioctl(fd[e], EVIOCGVERSION, &version))
 			{
 				fprintf(stderr, "could not get driver version for %s, %s\n", *(&deviceP), strerror(errno));
 				return 1;
@@ -247,17 +254,20 @@ int main(int argc, char *argv[])
 				event[x].code = checkEvent[x].code;
 				event[x].value = checkEvent[x].value;
 			}
-					
+
 			// ** Write the event that we just got from checkEvent **
-			ret = write(fd, &event, sizeof(event));			
-						
-			if(ret < sizeof(event)) 
+			ret = write(fd[e], &event, sizeof(event));
+
+			if(ret < sizeof(event))
 			{
 				fprintf(stderr, "write event failed, %s\n", strerror(errno));
 				//should exit...				
-			}    
-			
-		}		
+			}
+
+		}
+		for (i = 0; i < MAXEVENTTYPE; i++)
+			if (fd[i] > 0)
+				close(fd[i]);
 	}
 	else // fopen() returned NULL
 	{
