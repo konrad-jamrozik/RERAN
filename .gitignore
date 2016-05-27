@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+### IntelliJ IDEA ###
+**/*.iws
+**/*.eml
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/misc.xml
+out/
