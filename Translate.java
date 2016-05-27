@@ -23,17 +23,7 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 
 
 public class Translate
@@ -58,13 +48,13 @@ public class Translate
 		
 		File wd = new File("/bin");
 				
-		try 
-		{
-			procReplay = Runtime.getRuntime().exec("/bin/bash", null, wd);
-		}
-		catch (IOException e) {e.printStackTrace();}
+//		try 
+//		{
+//			procReplay = Runtime.getRuntime().exec("/bin/bash", null, wd);
+//		}
+//		catch (IOException e) {e.printStackTrace();}
 		
-		if(procReplay != null) 
+		if(true) 
 		{
 			String eventsFilePath = args[0];
 			String splitEventOn = ",";
